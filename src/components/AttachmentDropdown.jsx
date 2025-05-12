@@ -52,7 +52,7 @@ export default function AttachmentDropdown({ taskId, onUploadSuccess }) {
       // Replace with your actual API endpoint for uploading attachments
       // The endpoint might need the taskId in the URL or as part of FormData
       const response = await axios.put(
-        `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task/${taskId}/attachment`,
+        `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${taskId}/attachment`,
         formData,
         {
           headers: {

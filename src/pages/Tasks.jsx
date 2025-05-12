@@ -9,7 +9,7 @@ export default function Tasks() {
   const { user, signOut } = useAuth();
 
   useEffect(() => {
-    axios.get('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/tasks')
+    axios.get('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/tasks')
       .then(r => setTasks(r.data || []))
       .catch(err => console.error("Error fetching tasks:", err));
   }, []);

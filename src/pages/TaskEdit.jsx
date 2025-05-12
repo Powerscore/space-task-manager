@@ -16,7 +16,7 @@ export default function TaskEdit({ isNew }) {
   useEffect(() => {
     if (!isNew && id) {
       setLoading(true);
-      axios.get(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task/${id}`)
+      axios.get(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`)
         .then(r => {
           setInitialData(r.data);
           setError(null);
@@ -33,10 +33,10 @@ export default function TaskEdit({ isNew }) {
   const handleSave = async (data) => {
     try {
       if (isNew) {
-        const response = await axios.post('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task', data);
+        const response = await axios.post('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task', data);
         navigate(`/tasks/${response.data.id || ''}`);
       } else {
-        await axios.patch(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task/${id}`, data);
+        await axios.patch(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`, data);
         navigate(`/tasks/${id}`);
       }
     } catch (err) {

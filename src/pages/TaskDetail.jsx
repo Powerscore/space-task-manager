@@ -56,7 +56,7 @@ export default function TaskDetail() {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task/${id}`)
+    axios.get(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`)
       .then(r => {
         setTask(r.data);
         setError(null);
@@ -72,7 +72,7 @@ export default function TaskDetail() {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
-        await axios.delete(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/task-management-deploy-stage/task/${id}`);
+        await axios.delete(`https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`);
         navigate('/tasks');
       } catch (err) {
         console.error("Error deleting task:", err);

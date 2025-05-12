@@ -18,24 +18,25 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <main className="flex justify-center min-w-screen items-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500">
-
-    
-    <AuthProvider>
-      {/* <SpaceBackground> */}
+    // Use a neutral background for the entire app, allowing pages to control their specific layouts
+    <main className="min-h-screen bg-gray-100 text-gray-800 font-sans">
+      <AuthProvider>
         <Router>
+          {/* Consider adding a global Navbar/Header component here for consistent navigation */}
+          {/* <Navbar /> */}
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
             <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
             <Route path="/tasks/:id" element={<PrivateRoute><TaskDetail /></PrivateRoute>} />
-            <Route path="/tasks/:id/edit" element={<PrivateRoute><TaskEdit /></PrivateRoute>} />
-            <Route path="/tasks/new" element={<PrivateRoute><TaskEdit isNew /></PrivateRoute>} />
+            <Route path="/tasks/:id/edit" element={<PrivateRoute><TaskEdit isNew={false} /></PrivateRoute>} />
+            <Route path="/tasks/new" element={<PrivateRoute><TaskEdit isNew={true} /></PrivateRoute>} />
           </Routes>
+          {/* Consider adding a global Footer component here */}
+          {/* <Footer /> */}
         </Router>
-      {/* </SpaceBackground> */}
-    </AuthProvider>
+      </AuthProvider>
     </main>
   );
 }

@@ -5,25 +5,25 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [progress, setProgress] = useState('to-do');
-  const [deadline, setDeadline] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setTitle(initialData.title || '');
       setDescription(initialData.description || '');
       setProgress(initialData.progress || 'to-do');
-      setDeadline(initialData.deadline ? new Date(initialData.deadline).toISOString().substring(0, 16) : '');
+      setDueDate(initialData.dueDate ? new Date(initialData.dueDate).toISOString().substring(0, 16) : '');
     } else {
       setTitle('');
       setDescription('');
       setProgress('to-do');
-      setDeadline('');
+      setDueDate('');
     }
   }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ title, description, progress, deadline });
+    onSave({ title, description, progress, dueDate });
   };
 
   const inputClasses = "w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors";
@@ -72,12 +72,12 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
           </select>
         </div>
         <div>
-          <label htmlFor="deadline" className={labelClasses}>Deadline</label>
+          <label htmlFor="dueDate" className={labelClasses}>Due Date</label>
           <input 
-            id="deadline"
+            id="dueDate"
             type="datetime-local" 
-            value={deadline} 
-            onChange={(e) => setDeadline(e.target.value)} 
+            value={dueDate} 
+            onChange={(e) => setDueDate(e.target.value)} 
             className={inputClasses} 
           />
         </div>

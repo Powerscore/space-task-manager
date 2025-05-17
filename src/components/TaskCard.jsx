@@ -49,7 +49,7 @@ export default function TaskCard({ task }) {
           
           <div className="mt-auto">
             <div className="flex justify-between items-center mb-2 text-xs text-gray-500">
-              <span>Deadline: {formatDate(task.deadline)}</span>
+              <span>Due Date: {formatDate(task.dueDate)}</span>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.progress || 'to-do')}`}>
                 {task.progress || 'To-do'}
               </span>

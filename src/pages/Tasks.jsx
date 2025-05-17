@@ -3,16 +3,51 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import TaskCard from '../components/TaskCard';
 import { useAuth } from '../AuthContext';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
+
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const { user, signOut } = useAuth();
 
+
   useEffect(() => {
-    axios.get('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/tasks')
-      .then(r => setTasks(r.data || []))
-      .catch(err => console.error("Error fetching tasks:", err));
+    const fetchTasks = async () => {
+      try {
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString(); // JWT
+
+        if (!token) throw new Error("No ID token found");
+
+        const response = await axios.get('https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/tasks', {
+          headers: {
+            Authorization: token
+          }
+        });
+
+        const rawTasks = response.data?.tasks || [];
+const parsedTasks = rawTasks.map(item => ({
+  id: item.task_id?.S,
+  title: item.title?.S,
+  description: item.description?.S,
+  dueDate: item.dueDate?.S,
+  priority: item.priority?.S,
+  status: item.status?.S,
+  attachmentUrl: item.attachmentUrl?.S,
+  createdAt: item.createdAt?.S,
+  updatedAt: item.updatedAt?.S,
+}));
+setTasks(parsedTasks);
+
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      }
+    };
+
+    fetchTasks();
   }, []);
+
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">

@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import axios from 'axios'; // Assuming you might use axios for direct uploads from here
+import React, { useState, useRef } from 'react'; // Added React import
+import axios from 'axios';
+import { useAuth } from 'react-oidc-context'; // Import useAuth
 
 // Simple Plus Icon
 const PlusIcon = () => (
@@ -21,62 +22,76 @@ export default function AttachmentDropdown({ taskId, onUploadSuccess }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const fileInputRef = useRef(null);
+  const auth = useAuth(); // Get auth context
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    setUploadError(null); // Reset error on new file selection
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+      setUploadError(null); // Clear previous errors
+    }
   };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setUploadError('Please select a file first.');
+      setUploadError("Please select a file first.");
       return;
     }
-    if (!taskId) {
-      setUploadError('Task ID is missing. Cannot upload attachment.');
-      // This case should ideally be handled by disabling the component or not rendering it
-      // if taskId is not available.
-      console.error("AttachmentDropdown: Task ID is missing.");
+    if (!auth.isAuthenticated || !auth.user?.id_token) {
+      setUploadError("You must be signed in to upload files.");
+      alert("Authentication error. Please sign in again.");
       return;
     }
 
     setUploading(true);
     setUploadError(null);
 
-    const formData = new FormData();
-    formData.append('file', selectedFile); // Key 'file' depends on your API
-
     try {
-      // Replace with your actual API endpoint for uploading attachments
-      // The endpoint might need the taskId in the URL or as part of FormData
-      const response = await axios.put(
-        `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${taskId}/attachment`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            // Add any auth headers if required by your API
-          },
-        }
-      );
-      // Assuming the API returns the new attachment details or a success message
-      if (onUploadSuccess) {
-        onUploadSuccess(response.data); // Pass data to parent (e.g., to update task details)
+      const token = auth.user.id_token;
+      const filename = selectedFile.name;
+      const presignEndpoint = `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${taskId}/attachments`;
+
+      // 1. Get pre-signed URL from your backend
+      const { data: presignResponse } = await axios.put(presignEndpoint, null, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { key: filename }, 
+      });
+
+      if (!presignResponse.uploadUrl) {
+        throw new Error("Could not retrieve an upload URL.");
       }
-      setSelectedFile(null); // Reset file input
-      if(fileInputRef.current) fileInputRef.current.value = ""; // Clear the actual file input
-      setIsOpen(false); // Close dropdown on success
-    } catch (error) {
-      console.error("Error uploading attachment:", error);
-      setUploadError(error.response?.data?.message || 'Upload failed. Please try again.');
+
+      // 2. Upload the file to S3 using the pre-signed URL
+      await fetch(presignResponse.uploadUrl, {
+        method: 'PUT',
+        body: selectedFile,
+        headers: {
+          'Content-Type': selectedFile.type || 'application/octet-stream',
+        },
+      });
+      
+      // 3. (Optional but recommended) Update task with new attachment key via PATCH
+      const patchPayload = { attachmentUrl: filename }; // Or whatever key your backend expects
+      await axios.patch(
+        `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${taskId}`,
+        patchPayload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setSelectedFile(null); // Clear selection
+      setIsOpen(false); // Close dropdown
+      if (onUploadSuccess) {
+        onUploadSuccess(filename); // Notify parent component
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setUploadError(err.response?.data?.message || err.message || "Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
   };
 
-  // This component is simplified. In a real app, you might list existing attachments too.
   return (
     <div className="relative inline-block text-left w-full md:w-auto">
       <button 
@@ -86,7 +101,6 @@ export default function AttachmentDropdown({ taskId, onUploadSuccess }) {
       >
         <PaperclipIcon />
         Manage Attachments
-        {/* Dropdown Arrow Icon */}
         <svg className={`w-4 h-4 ml-2 transition-transform ${isOpen ? '-rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
@@ -128,10 +142,9 @@ export default function AttachmentDropdown({ taskId, onUploadSuccess }) {
           >
             {uploading ? (
               <>
-                {/* Spinner Icon */}
                 <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 Uploading...
               </>

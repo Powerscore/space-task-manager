@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Assuming AuthContext is in src/
+import { useAuth } from 'react-oidc-context';// Assuming AuthContext is in src/
 
 export default function Home() {
   const { user, signOut } = useAuth();

@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../AuthContext";
-import { fetchAuthSession } from "aws-amplify/auth";
-
-// Helper to get ID token
-const fetchUserAuthToken = async () => {
-  const session = await fetchAuthSession();
-  const token = session.tokens?.idToken?.toString();
-  if (!token) throw new Error("No ID token found");
-  return token;
-};
+import { useAuth } from 'react-oidc-context';
 
 // Helper function to determine status color
 const getStatusPill = (status) => {
@@ -100,17 +91,22 @@ export default function TaskDetail() {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user, signOut } = useAuth();
+  const auth = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTask = async () => {
+      if (!auth.user?.id_token) {
+        setError("Authentication token is missing. Please sign in.");
+        setLoading(false);
+        return;
+      }
       try {
-        const token = await fetchUserAuthToken();
+        const token = auth.user.id_token;
         const response = await axios.get(
           `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`,
-          { headers: { Authorization: token } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         const raw = response.data.task;
         setTask({
@@ -130,15 +126,24 @@ export default function TaskDetail() {
         setLoading(false);
       }
     };
-    if (id) fetchTask();
-  }, [id]);
+    if (id && auth.isAuthenticated) {
+      fetchTask();
+    } else if (!auth.isLoading && !auth.isAuthenticated) {
+      setError("Please sign in to view task details.");
+      setLoading(false);
+    }
+  }, [id, auth.isAuthenticated, auth.isLoading, auth.user?.id_token]);
 
   const handleDelete = async () => {
+    if (!auth.user?.id_token) {
+      alert("Authentication token is missing. Please sign in.");
+      return;
+    }
     try {
-      const token = await fetchUserAuthToken();
+      const token = auth.user.id_token;
       await axios.delete(
         `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`,
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       navigate("/tasks");
     } catch (err) {
@@ -149,13 +154,17 @@ export default function TaskDetail() {
 
   const handleGetAttachment = async () => {
     if (!task?.attachmentUrl) return;
+    if (!auth.user?.id_token) {
+      alert("Authentication token is missing. Please sign in.");
+      return;
+    }
     console.log("[LOG] handleGetAttachment: start");
     try {
-      const token = await fetchUserAuthToken();
+      const token = auth.user.id_token;
       const response = await axios.get(
         `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}/attachments`,
         {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
           params: { key: task.attachmentUrl },
         }
       );
@@ -169,6 +178,11 @@ export default function TaskDetail() {
     }
   };
 
+  const handleSignOut = () => {
+    const postLogoutRedirectUri = window.location.origin + '/';
+    auth.signoutRedirect({ post_logout_redirect_uri: postLogoutRedirectUri });
+  };
+
   if (loading)
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
@@ -176,9 +190,27 @@ export default function TaskDetail() {
       </div>
     );
 
-  if (error)
+  if (error && !auth.isAuthenticated && !auth.isLoading) {
     return (
-      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+        <p className="text-red-600 text-lg mb-4">{error}</p>
+        <button
+          onClick={() => auth.signinRedirect()}
+          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Sign In
+        </button>
+        <Link
+          to="/tasks"
+          className="mt-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-2"
+        >
+          Back to Tasks
+        </Link>
+      </div>
+    );
+  } else if (error) {
+    return (
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
         <p className="text-red-600 text-lg">{error}</p>
         <Link
           to="/tasks"
@@ -187,6 +219,37 @@ export default function TaskDetail() {
         </Link>
       </div>
     );
+  }
+
+  if (!auth.isAuthenticated && !auth.isLoading) {
+    return (
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+        <p className="text-gray-700 text-lg mb-4">Please sign in to view this task.</p>
+        <button
+          onClick={() => auth.signinRedirect()}
+          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
+
+  if (!task && !loading) {
+    return (
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+        <p className="text-gray-700 text-lg">Task not found or could not be loaded.</p>
+        <Link
+          to="/tasks"
+          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Back to Tasks
+        </Link>
+      </div>
+    );
+  }
+
+  if (!task) return null;
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
@@ -206,9 +269,9 @@ export default function TaskDetail() {
               className="text-gray-600 hover:text-purple-600 font-medium">
               Calendar
             </Link>
-            {user && (
+            {auth.isAuthenticated && (
               <button
-                onClick={signOut}
+                onClick={handleSignOut}
                 className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
                 Sign Out
               </button>
@@ -239,33 +302,29 @@ export default function TaskDetail() {
             {getStatusPill(task.status)}
           </p>
           {task.attachmentUrl && (
-            <p>
+            <div className="py-2">
               <span className="font-semibold">Attachment:</span>{" "}
-              {task.attachmentUrl}
-            </p>
+              <button 
+                onClick={handleGetAttachment}
+                className="ml-2 text-purple-600 hover:text-purple-800 underline"
+              >
+                {task.attachmentUrl} (Download)
+              </button>
+            </div>
           )}
 
-          {user && (
+          {auth.isAuthenticated && (
             <div className="mt-6 flex flex-wrap gap-3 justify-end">
-              {/* Back */}
               <Link
                 to="/tasks"
                 className="px-4 py-2 !bg-gray-100 border border-gray-300 hover:!bg-gray-200 text-gray-800 rounded-lg transition">
                 Back
               </Link>
-              {/* Edit */}
               <Link
                 to={`/tasks/${id}/edit`}
                 className="px-4 py-2 !bg-indigo-600 hover:!bg-indigo-700 text-white rounded-lg transition">
                 Edit Task
               </Link>
-              {/* Download Attachment */}
-              <button
-                onClick={handleGetAttachment}
-                className="px-4 py-2 !bg-teal-500 hover:!bg-teal-600 text-white rounded-lg transition">
-                Download Attachment
-              </button>
-              {/* Delete */}
               <button
                 onClick={() => setShowConfirm(true)}
                 className="px-4 py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-lg transition">

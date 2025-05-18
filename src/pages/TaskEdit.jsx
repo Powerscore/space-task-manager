@@ -57,6 +57,14 @@ export default function TaskEdit({ isNew }) {
     }
   }, [id, isNew]);
 
+  if (!isNew && loading) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
+        <p>Loading task for editing…</p>
+      </div>
+    );
+  }
+
   const handleSave = async (data) => {
     try {
       const token = await fetchUserAuthToken();
@@ -107,6 +115,8 @@ export default function TaskEdit({ isNew }) {
         status: data.status,
         title: data.title.trim(),
       };
+      console.log("Data to save:", data);
+      console.log("Payload in patching:", payload);
       await axios.patch(`${urlBase}/${taskId}`, payload, {
         headers: { Authorization: token },
       });
@@ -129,7 +139,9 @@ export default function TaskEdit({ isNew }) {
             <Link to="/tasks" className="text-gray-600 hover:text-purple-600">
               My Tasks
             </Link>
-            <Link to="/calendar" className="text-gray-600 hover:text-purple-600">
+            <Link
+              to="/calendar"
+              className="text-gray-600 hover:text-purple-600">
               Calendar
             </Link>
             {user && (

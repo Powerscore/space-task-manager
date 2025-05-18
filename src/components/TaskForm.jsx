@@ -4,15 +4,16 @@ import AttachmentDropdown from "./AttachmentDropdown";
 export default function TaskForm({ initialData = {}, onSave, isNew }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("to-do");
+  const [status, setStatus] = useState("To-do");
   const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
+    console.log("💡 [TaskForm] initialData changed:", initialData);
     if (initialData && Object.keys(initialData).length > 0) {
       setTitle(initialData.title || "");
       setDescription(initialData.description || "");
-      setStatus(initialData.status || "to-do");
+      setStatus(initialData.status || "To-do");
       setPriority(initialData.priority || "Medium");
       setDueDate(
         initialData.dueDate
@@ -22,7 +23,7 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
     } else {
       setTitle("");
       setDescription("");
-      setStatus("to-do");
+      setStatus("To-do");
       setPriority("Medium");
       setDueDate("");
     }
@@ -30,6 +31,7 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("💡 [TaskForm] about to call onSave with:", e);
     onSave({ title, description, status, priority, dueDate });
   };
 

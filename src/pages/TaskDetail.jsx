@@ -170,23 +170,31 @@ export default function TaskDetail() {
           )}
 
           {user && (
-            <div className="mt-6 flex space-x-4 justify-end">
-              <Link to={`/tasks/${id}/edit`} className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg">
-                Edit
-              </Link>
-              <button
-                onClick={handleGetAttachment}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-              >
-                Download Attachment
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
-              >
-                Delete
-              </button>
-            </div>
+          <div className="mt-6 flex flex-wrap gap-3 justify-end">
+          {/* Back */}
+          <Link to="/tasks" className="px-4 py-2 !bg-gray-100 border border-gray-300 hover:!bg-gray-200 text-gray-800 rounded-lg transition">
+            Back
+          </Link>
+          {/* Edit */}
+          <Link to={`/tasks/${id}/edit`} className="px-4 py-2 !bg-indigo-600 hover:!bg-indigo-700 text-white rounded-lg transition">
+            Edit Task
+          </Link>
+          {/* Download Attachment */}
+          <button
+            onClick={handleGetAttachment}
+            className="px-4 py-2 !bg-teal-500 hover:!bg-teal-600 text-white rounded-lg transition"
+          >
+            Download Attachment
+          </button>
+          {/* Delete */}
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-lg transition"
+            >
+            Delete
+          </button>
+        </div>
+        
           )}
         </div>
       </main>

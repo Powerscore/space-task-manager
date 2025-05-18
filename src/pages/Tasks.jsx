@@ -27,17 +27,25 @@ export default function Tasks() {
         );
 
         const rawTasks = response.data?.tasks || [];
-        const parsedTasks = rawTasks.map((item) => ({
-          id: item.task_id?.S,
-          title: item.title?.S,
-          description: item.description?.S,
-          dueDate: item.dueDate?.S,
-          priority: item.priority?.S,
-          status: item.status?.S,
-          attachmentUrl: item.attachmentUrl?.S,
-          createdAt: item.createdAt?.S,
-          updatedAt: item.updatedAt?.S,
-        }));
+        const parsedTasks = rawTasks
+          .map((item) => ({
+            id: item.task_id?.S,
+            title: item.title?.S,
+            description: item.description?.S,
+            dueDate: item.dueDate?.S,
+            priority: item.priority?.S,
+            status: item.status?.S,
+            attachmentUrl: item.attachmentUrl?.S,
+            createdAt: item.createdAt?.S,
+            updatedAt: item.updatedAt?.S,
+          }))
+          .sort((a, b) => {
+            // Convert ISO strings to timestamps for comparison
+            const da = new Date(a.dueDate).getTime();
+            const db = new Date(b.dueDate).getTime();
+            return da - db; // ascending: earliest due date first
+          });
+
         setTasks(parsedTasks);
       } catch (err) {
         console.error("Error fetching tasks:", err);
@@ -56,8 +64,13 @@ export default function Tasks() {
             SpaceTaskManager
           </Link>
           <nav className="flex items-center space-x-4">
-            <Link to="/tasks" className="text-purple-600 font-semibold">
+            <Link to="/tasks" className="text-purple-600 hover:text-purple-800 font-semibold">
               My Tasks
+            </Link>
+            <Link
+              to="/calendar"
+              className="text-gray-600 hover:text-purple-600 font-medium">
+              Calendar
             </Link>
             {user && (
               <button
@@ -76,11 +89,13 @@ export default function Tasks() {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
             Your Tasks
           </h1>
-          <Link
-            to="/tasks/new"
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md text-base font-semibold transition-all duration-300 transform hover:scale-105">
-            + New Task
-          </Link>
+          <div className="flex space-x-4">
+            <Link
+              to="/tasks/new"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md text-base font-semibold transition-all duration-300 transform hover:scale-105">
+              + New Task
+            </Link>
+          </div>
         </div>
 
         {/* Task List */}

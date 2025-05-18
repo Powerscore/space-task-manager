@@ -9,6 +9,7 @@ import Signup from './pages/Signup';
 import Tasks from './pages/Tasks';
 import TaskDetail from './pages/TaskDetail';
 import TaskEdit from './pages/TaskEdit';
+import TaskCalendar from './pages/TaskCalendar';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/tasks/:id" element={<PrivateRoute><TaskDetail /></PrivateRoute>} />
             <Route path="/tasks/:id/edit" element={<PrivateRoute><TaskEdit isNew={false} /></PrivateRoute>} />
             <Route path="/tasks/new" element={<PrivateRoute><TaskEdit isNew={true} /></PrivateRoute>} />
+            <Route path="/calendar" element={<PrivateRoute><TaskCalendar /></PrivateRoute>} />
           </Routes>
           {/* Consider adding a global Footer component here */}
           {/* <Footer /> */}

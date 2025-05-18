@@ -146,6 +146,7 @@ export default function TaskDetail() {
           <Link to="/" className="text-2xl font-bold text-purple-600">SpaceTaskManager</Link>
           <nav className="flex items-center space-x-4">
             <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">My Tasks</Link>
+            <Link to="/calendar" className="text-gray-600 hover:text-purple-600 font-medium">Calendar</Link>
             {user && (
               <button
                 onClick={signOut}

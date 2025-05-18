@@ -129,6 +129,9 @@ export default function TaskEdit({ isNew }) {
             <Link to="/tasks" className="text-gray-600 hover:text-purple-600">
               My Tasks
             </Link>
+            <Link to="/calendar" className="text-gray-600 hover:text-purple-600">
+              Calendar
+            </Link>
             {user && (
               <button
                 onClick={signOut}

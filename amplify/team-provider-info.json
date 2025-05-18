@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-spacetaskmanager-dev-b441d-authRole",
+      "UnauthRoleArn": "arn:aws:iam::428699245244:role/amplify-spacetaskmanager-dev-b441d-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::428699245244:role/amplify-spacetaskmanager-dev-b441d-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-spacetaskmanager-dev-b441d-deployment",
+      "UnauthRoleName": "amplify-spacetaskmanager-dev-b441d-unauthRole",
+      "StackName": "amplify-spacetaskmanager-dev-b441d",
+      "StackId": "arn:aws:cloudformation:eu-north-1:428699245244:stack/amplify-spacetaskmanager-dev-b441d/d88ddd80-2f15-11f0-b384-06ed40383891",
+      "AmplifyAppId": "d3tjdqwooimiv2"
+    },
+    "categories": {
+      "auth": {
+        "spacetaskmanager90128fc2": {}
+      }
+    }
+  }
+}

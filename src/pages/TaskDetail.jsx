@@ -13,9 +13,9 @@ const fetchUserAuthToken = async () => {
 };
 
 // Helper function to determine status color
-const getStatusPill = (progress) => {
+const getStatusPill = (status) => {
   let bgColor, textColor, SvgIcon;
-  switch (progress?.toLowerCase()) {
+  switch (status?.toLowerCase()) {
     case 'to-do':
       bgColor = 'bg-gray-100'; textColor = 'text-gray-700';
       SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>;
@@ -39,7 +39,7 @@ const getStatusPill = (progress) => {
   return (
     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${bgColor} ${textColor}`}>
       {SvgIcon && <SvgIcon />}
-      {progress || 'N/A'}
+      {status || 'N/A'}
     </span>
   );
 };

@@ -4,26 +4,26 @@ import AttachmentDropdown from "./AttachmentDropdown";
 export default function TaskForm({ initialData = {}, onSave, isNew }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [progress, setProgress] = useState('to-do');
+  const [status, setStatus] = useState('to-do');
   const [dueDate, setDueDate] = useState('');
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
       setTitle(initialData.title || '');
       setDescription(initialData.description || '');
-      setProgress(initialData.progress || 'to-do');
+      setStatus(initialData.status || 'to-do');
       setDueDate(initialData.dueDate ? new Date(initialData.dueDate).toISOString().substring(0, 16) : '');
     } else {
       setTitle('');
       setDescription('');
-      setProgress('to-do');
+      setStatus('to-do');
       setDueDate('');
     }
   }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ title, description, progress, dueDate });
+    onSave({ title, description, status, dueDate });
   };
 
   const inputClasses = "w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors";
@@ -58,17 +58,17 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="progress" className={labelClasses}>Status</label>
+          <label htmlFor="status" className={labelClasses}>Status</label>
           <select 
-            id="progress"
-            value={progress} 
-            onChange={(e) => setProgress(e.target.value)} 
+            id="status"
+            value={status} 
+            onChange={(e) => setStatus(e.target.value)} 
             className={inputClasses}
           >
-            <option value="to-do">To-do</option>
-            <option value="in progress">In Progress</option>
-            <option value="done">Done</option>
-            <option value="canceled">Canceled</option>
+            <option value="To-do">To-do</option>
+            <option value="In progress">In progress</option>
+            <option value="Done">Done</option>
+            <option value="Canceled">Canceled</option>
           </select>
         </div>
         <div>

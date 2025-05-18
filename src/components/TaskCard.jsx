@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 // Helper function to determine status color - customize as needed
-const getStatusColor = (progress) => {
-  switch (progress.toLowerCase()) {
+const getStatusColor = (status) => {
+  switch (status.toLowerCase()) {
     case 'to-do':
       return 'bg-gray-200 text-gray-700';
-    case 'in progress':
+    case 'in status':
       return 'bg-blue-200 text-blue-700';
     case 'done':
       return 'bg-green-200 text-green-700';
@@ -50,8 +50,8 @@ export default function TaskCard({ task }) {
           <div className="mt-auto">
             <div className="flex justify-between items-center mb-2 text-xs text-gray-500">
               <span>Due Date: {formatDate(task.dueDate)}</span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.progress || 'to-do')}`}>
-                {task.progress || 'To-do'}
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status || 'to-do')}`}>
+                {task.status || 'To-do'}
               </span>
             </div>
             {/* Add more details or actions here if needed, e.g., priority, assignee */}

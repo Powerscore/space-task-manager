@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import TaskForm from '../components/TaskForm';
-import { useAuth } from '../AuthContext';
-import { fetchAuthSession } from '@aws-amplify/auth';
-import { useDropzone } from 'react-dropzone';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import TaskForm from "../components/TaskForm";
+import { useAuth } from "../AuthContext";
+import { fetchAuthSession } from "@aws-amplify/auth";
+import { useDropzone } from "react-dropzone";
 
 const fetchUserAuthToken = async () => {
   const session = await fetchAuthSession();
@@ -61,37 +61,39 @@ export default function TaskEdit({ isNew }) {
     try {
       const token = await fetchUserAuthToken();
       let taskId = id;
-      const urlBase = 'https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task';
+      const urlBase =
+        "https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task";
 
       if (isNew) {
-        const { data: createResp } = await axios.post(urlBase, data, { headers: { Authorization: token } });
+        console.log("Creating new task");
+        console.log("Data:", data);
+        const { data: createResp } = await axios.post(urlBase, data, {
+          headers: { Authorization: token },
+        });
         taskId = createResp.id;
       }
 
-      let attachmentUrl = data.attachmentUrl || '';
+      let attachmentUrl = data.attachmentUrl || "";
 
       if (file) {
         const filename = file.name;
         const presignEndpoint = `${urlBase}/${taskId}/attachments`;
 
         // PUT to get upload URL
-        const { data: uploadResp } = await axios.put(
-          presignEndpoint,
-          null,
-          {
-            headers: { Authorization: token },
-            params: { key: filename }
-          }
-        );
+        const { data: uploadResp } = await axios.put(presignEndpoint, null, {
+          headers: { Authorization: token },
+          params: { key: filename },
+        });
         const uploadUrl = uploadResp.uploadUrl;
 
         // Upload the file
         const uploadResult = await fetch(uploadUrl, {
-          method: 'PUT',
+          method: "PUT",
           body: file,
-          headers: { 'Content-Type': file.type || 'application/octet-stream' }
+          headers: { "Content-Type": file.type || "application/octet-stream" },
         });
-        if (!uploadResult.ok) throw new Error(`Upload failed (${uploadResult.status})`);
+        if (!uploadResult.ok)
+          throw new Error(`Upload failed (${uploadResult.status})`);
 
         attachmentUrl = `${filename}`;
       }
@@ -101,11 +103,13 @@ export default function TaskEdit({ isNew }) {
         ...data,
         attachmentUrl,
         dueDate: data.dueDate,
-        priority: data.priority || 'Medium',
-        status: data.status || 'Not Started',
-        title: data.title.trim()
+        priority: data.priority || "Medium",
+        status: data.status,
+        title: data.title.trim(),
       };
-      await axios.patch(`${urlBase}/${taskId}`, payload, { headers: { Authorization: token } });
+      await axios.patch(`${urlBase}/${taskId}`, payload, {
+        headers: { Authorization: token },
+      });
 
       navigate(`/tasks/${taskId}`);
     } catch (err) {
@@ -118,11 +122,19 @@ export default function TaskEdit({ isNew }) {
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
       <header className="py-4 px-6 bg-white shadow sticky top-0">
         <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-purple-600">SpaceTaskManager</Link>
+          <Link to="/" className="text-2xl font-bold text-purple-600">
+            SpaceTaskManager
+          </Link>
           <nav className="flex items-center space-x-4">
-            <Link to="/tasks" className="text-gray-600 hover:text-purple-600">My Tasks</Link>
+            <Link to="/tasks" className="text-gray-600 hover:text-purple-600">
+              My Tasks
+            </Link>
             {user && (
-              <button onClick={signOut} className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm">Sign Out</button>
+              <button
+                onClick={signOut}
+                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm">
+                Sign Out
+              </button>
             )}
           </nav>
         </div>
@@ -131,29 +143,44 @@ export default function TaskEdit({ isNew }) {
       <main className="flex-grow container mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg border space-y-6">
           <h1 className="text-3xl font-bold text-gray-800 text-center">
-            {isNew ? 'Create New Task' : 'Edit Task'}
+            {isNew ? "Create New Task" : "Edit Task"}
           </h1>
 
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed p-6 rounded-lg text-center ${isDragActive ? 'border-purple-400 bg-purple-50' : 'border-gray-300 bg-white'}`}>
+            className={`border-2 border-dashed p-6 rounded-lg text-center ${
+              isDragActive
+                ? "border-purple-400 bg-purple-50"
+                : "border-gray-300 bg-white"
+            }`}>
             <input {...getInputProps()} />
             {file ? (
-              <p className="text-gray-800">Selected file: <strong>{file.name}</strong></p>
+              <p className="text-gray-800">
+                Selected file: <strong>{file.name}</strong>
+              </p>
             ) : (
-              <p className="text-gray-500">Drag & drop a file here, or click to select</p>
+              <p className="text-gray-500">
+                Drag & drop a file here, or click to select
+              </p>
             )}
           </div>
 
-          <TaskForm initialData={{
-            ...initialData,
-            attachmentUrl: file ? file.name : initialData?.attachmentUrl || ''
-          }} onSave={handleSave} isNew={isNew} />
+          <TaskForm
+            initialData={{
+              ...initialData,
+              attachmentUrl: file
+                ? file.name
+                : initialData?.attachmentUrl || "",
+            }}
+            onSave={handleSave}
+            isNew={isNew}
+          />
         </div>
       </main>
 
       <footer className="py-8 bg-gray-100 text-center text-sm text-gray-600 border-t">
-        &copy; {new Date().getFullYear()} Space Task Manager. All rights reserved.
+        &copy; {new Date().getFullYear()} Space Task Manager. All rights
+        reserved.
       </footer>
     </div>
   );

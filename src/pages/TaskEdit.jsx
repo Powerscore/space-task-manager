@@ -107,14 +107,22 @@ export default function TaskEdit({ isNew }) {
       }
 
       // Persist task update
-      const payload = {
+      const rawPayload = {
         ...data,
         attachmentUrl,
         dueDate: data.dueDate,
-        priority: data.priority || "Medium",
+        priority: data.priority,
         status: data.status,
-        title: data.title.trim(),
+        title: data.title?.trim(),
       };
+      
+      // Remove empty string, null, or undefined fields
+      const payload = Object.fromEntries(
+        Object.entries(rawPayload).filter(
+          ([_, v]) => v !== undefined && v !== null && v !== ""
+        )
+      );
+      
       console.log("Data to save:", data);
       console.log("Payload in patching:", payload);
       await axios.patch(`${urlBase}/${taskId}`, payload, {

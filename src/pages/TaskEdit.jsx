@@ -115,20 +115,21 @@ export default function TaskEdit({ isNew }) {
         status: data.status,
         title: data.title?.trim(),
       };
-      
+
       // Remove empty string, null, or undefined fields
       const payload = Object.fromEntries(
         Object.entries(rawPayload).filter(
           ([_, v]) => v !== undefined && v !== null && v !== ""
         )
       );
-      
+
       console.log("Data to save:", data);
       console.log("Payload in patching:", payload);
-      await axios.patch(`${urlBase}/${taskId}`, payload, {
-        headers: { Authorization: token },
-      });
-
+      if (payload && Object.keys(payload).length > 0) {
+        await axios.patch(`${urlBase}/${taskId}`, payload, {
+          headers: { Authorization: token },
+        });
+      }
       navigate(`/tasks/${taskId}`);
     } catch (err) {
       console.error(err);

@@ -4,8 +4,8 @@ import AttachmentDropdown from "./AttachmentDropdown";
 export default function TaskForm({ initialData = {}, onSave, isNew }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("To-do");
-  const [priority, setPriority] = useState("Medium");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
   const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
@@ -13,8 +13,8 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
     if (initialData && Object.keys(initialData).length > 0) {
       setTitle(initialData.title || "");
       setDescription(initialData.description || "");
-      setStatus(initialData.status || "To-do");
-      setPriority(initialData.priority || "Medium");
+      setStatus(initialData.status || "");
+      setPriority(initialData.priority || "");
       setDueDate(
         initialData.dueDate
           ? new Date(initialData.dueDate).toISOString().substring(0, 16)
@@ -23,8 +23,8 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
     } else {
       setTitle("");
       setDescription("");
-      setStatus("To-do");
-      setPriority("Medium");
+      setStatus("");
+      setPriority("");
       setDueDate("");
     }
   }, [initialData]);
@@ -79,9 +79,11 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
           <select
             id="status"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) => setStatus(e.target.value || null)}
+            required={isNew}
             className={inputClasses}
           >
+            <option value="">Select status</option>
             <option value="To-do">To-do</option>
             <option value="In progress">In Progress</option>
             <option value="Done">Done</option>
@@ -96,9 +98,11 @@ export default function TaskForm({ initialData = {}, onSave, isNew }) {
           <select
             id="priority"
             value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={(e) => setPriority(e.target.value || null)}
+            required={isNew}
             className={inputClasses}
           >
+            <option value="">Select priority</option>
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>

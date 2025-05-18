@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../AuthContext';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import React, { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../AuthContext";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 // Helper to get ID token
 const fetchUserAuthToken = async () => {
   const session = await fetchAuthSession();
   const token = session.tokens?.idToken?.toString();
-  if (!token) throw new Error('No ID token found');
+  if (!token) throw new Error("No ID token found");
   return token;
 };
 
@@ -16,39 +16,79 @@ const fetchUserAuthToken = async () => {
 const getStatusPill = (status) => {
   let bgColor, textColor, SvgIcon;
   switch (status?.toLowerCase()) {
-    case 'to-do':
-      bgColor = 'bg-gray-100'; textColor = 'text-gray-700';
-      SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>;
+    case "to-do":
+      bgColor = "bg-gray-100";
+      textColor = "text-gray-700";
+      SvgIcon = () => (
+        <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="7" />
+        </svg>
+      );
       break;
-    case 'in progress':
-      bgColor = 'bg-blue-100'; textColor = 'text-blue-700';
-      SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd"/></svg>;
+    case "in progress":
+      bgColor = "bg-blue-100";
+      textColor = "text-blue-700";
+      SvgIcon = () => (
+        <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
       break;
-    case 'done':
-      bgColor = 'bg-green-100'; textColor = 'text-green-700';
-      SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>;
+    case "done":
+      bgColor = "bg-green-100";
+      textColor = "text-green-700";
+      SvgIcon = () => (
+        <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
       break;
-    case 'canceled':
-      bgColor = 'bg-red-100'; textColor = 'text-red-700';
-      SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/></svg>;
+    case "canceled":
+      bgColor = "bg-red-100";
+      textColor = "text-red-700";
+      SvgIcon = () => (
+        <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clipRule="evenodd"
+          />
+        </svg>
+      );
       break;
     default:
-      bgColor = 'bg-gray-100'; textColor = 'text-gray-600';
-      SvgIcon = () => <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>;
+      bgColor = "bg-gray-100";
+      textColor = "text-gray-600";
+      SvgIcon = () => (
+        <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="7" />
+        </svg>
+      );
   }
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${bgColor} ${textColor}`}>
+    <span
+      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${bgColor} ${textColor}`}>
       {SvgIcon && <SvgIcon />}
-      {status || 'N/A'}
+      {status || "N/A"}
     </span>
   );
 };
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'Not set';
+  if (!dateString) return "Not set";
   try {
     return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric', month: 'long', day: 'numeric'
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   } catch {
     return dateString;
@@ -61,6 +101,7 @@ export default function TaskDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user, signOut } = useAuth();
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -83,8 +124,8 @@ export default function TaskDetail() {
         });
         setError(null);
       } catch (err) {
-        console.error('Error fetching task:', err);
-        setError('Failed to load task. Try again.');
+        console.error("Error fetching task:", err);
+        setError("Failed to load task. Try again.");
       } finally {
         setLoading(false);
       }
@@ -93,65 +134,82 @@ export default function TaskDetail() {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
       const token = await fetchUserAuthToken();
       await axios.delete(
         `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`,
         { headers: { Authorization: token } }
       );
-      navigate('/tasks');
+      navigate("/tasks");
     } catch (err) {
-      console.error('Error deleting task:', err);
-      alert(`Failed to delete task: ${err.message || 'Unknown error'}`);
+      console.error("Error deleting task:", err);
+      alert(`Failed to delete task: ${err.message || "Unknown error"}`);
     }
   };
 
   const handleGetAttachment = async () => {
     if (!task?.attachmentUrl) return;
-    console.log('[LOG] handleGetAttachment: start');
+    console.log("[LOG] handleGetAttachment: start");
     try {
       const token = await fetchUserAuthToken();
       const response = await axios.get(
         `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}/attachments`,
-        { headers: { Authorization: token }, params: { key: task.attachmentUrl } }
+        {
+          headers: { Authorization: token },
+          params: { key: task.attachmentUrl },
+        }
       );
-      console.log('[LOG] handleGetAttachment: response:', response.data);
+      console.log("[LOG] handleGetAttachment: response:", response.data);
       const downloadUrl = response.data.downloadUrl;
-      console.log('[LOG] handleGetAttachment: downloadUrl:', downloadUrl);
-      window.open(downloadUrl, '_blank');
+      console.log("[LOG] handleGetAttachment: downloadUrl:", downloadUrl);
+      window.open(downloadUrl, "_blank");
     } catch (err) {
-      console.error('Error fetching attachment URL:', err);
-      alert(`Failed to get attachment: ${err.message || 'Unknown error'}`);
+      console.error("Error fetching attachment URL:", err);
+      alert(`Failed to get attachment: ${err.message || "Unknown error"}`);
     }
   };
 
-  if (loading) return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
-      <p className="text-gray-600 text-lg">Loading task details...</p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600 text-lg">Loading task details...</p>
+      </div>
+    );
 
-  if (error) return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <p className="text-red-600 text-lg">{error}</p>
-      <Link to="/tasks" className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg">Back to Tasks</Link>
-    </div>
-  );
+  if (error)
+    return (
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <p className="text-red-600 text-lg">{error}</p>
+        <Link
+          to="/tasks"
+          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg">
+          Back to Tasks
+        </Link>
+      </div>
+    );
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
       <header className="py-4 px-6 md:px-12 bg-white shadow-sm sticky top-0 border-b border-gray-200 z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-purple-600">SpaceTaskManager</Link>
+          <Link to="/" className="text-2xl font-bold text-purple-600">
+            SpaceTaskManager
+          </Link>
           <nav className="flex items-center space-x-4">
-            <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">My Tasks</Link>
-            <Link to="/calendar" className="text-gray-600 hover:text-purple-600 font-medium">Calendar</Link>
+            <Link
+              to="/tasks"
+              className="text-gray-600 hover:text-purple-600 font-medium">
+              My Tasks
+            </Link>
+            <Link
+              to="/calendar"
+              className="text-gray-600 hover:text-purple-600 font-medium">
+              Calendar
+            </Link>
             {user && (
               <button
                 onClick={signOut}
-                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium"
-              >
+                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
                 Sign Out
               </button>
             )}
@@ -161,47 +219,88 @@ export default function TaskDetail() {
 
       <main className="flex-grow container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg border space-y-6 relative">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">{task.title}</h1>
-          <p><span className="font-semibold">Description:</span> {task.description || 'No description provided.'}</p>
-          <p><span className="font-semibold">Due Date:</span> {formatDate(task.dueDate)}</p>
-          <p><span className="font-semibold">Priority:</span> {task.priority || 'Not set'}</p>
-          <p><span className="font-semibold">Status:</span> {getStatusPill(task.status)}</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+            {task.title}
+          </h1>
+          <p>
+            <span className="font-semibold">Description:</span>{" "}
+            {task.description || "No description provided."}
+          </p>
+          <p>
+            <span className="font-semibold">Due Date:</span>{" "}
+            {formatDate(task.dueDate)}
+          </p>
+          <p>
+            <span className="font-semibold">Priority:</span>{" "}
+            {task.priority || "Not set"}
+          </p>
+          <p>
+            <span className="font-semibold">Status:</span>{" "}
+            {getStatusPill(task.status)}
+          </p>
           {task.attachmentUrl && (
-            <p><span className="font-semibold">Attachment:</span> {task.attachmentUrl}</p>
+            <p>
+              <span className="font-semibold">Attachment:</span>{" "}
+              {task.attachmentUrl}
+            </p>
           )}
 
           {user && (
-          <div className="mt-6 flex flex-wrap gap-3 justify-end">
-          {/* Back */}
-          <Link to="/tasks" className="px-4 py-2 !bg-gray-100 border border-gray-300 hover:!bg-gray-200 text-gray-800 rounded-lg transition">
-            Back
-          </Link>
-          {/* Edit */}
-          <Link to={`/tasks/${id}/edit`} className="px-4 py-2 !bg-indigo-600 hover:!bg-indigo-700 text-white rounded-lg transition">
-            Edit Task
-          </Link>
-          {/* Download Attachment */}
-          <button
-            onClick={handleGetAttachment}
-            className="px-4 py-2 !bg-teal-500 hover:!bg-teal-600 text-white rounded-lg transition"
-          >
-            Download Attachment
-          </button>
-          {/* Delete */}
-          <button
-            onClick={handleDelete}
-            className="px-4 py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-lg transition"
-            >
-            Delete
-          </button>
-        </div>
-        
+            <div className="mt-6 flex flex-wrap gap-3 justify-end">
+              {/* Back */}
+              <Link
+                to="/tasks"
+                className="px-4 py-2 !bg-gray-100 border border-gray-300 hover:!bg-gray-200 text-gray-800 rounded-lg transition">
+                Back
+              </Link>
+              {/* Edit */}
+              <Link
+                to={`/tasks/${id}/edit`}
+                className="px-4 py-2 !bg-indigo-600 hover:!bg-indigo-700 text-white rounded-lg transition">
+                Edit Task
+              </Link>
+              {/* Download Attachment */}
+              <button
+                onClick={handleGetAttachment}
+                className="px-4 py-2 !bg-teal-500 hover:!bg-teal-600 text-white rounded-lg transition">
+                Download Attachment
+              </button>
+              {/* Delete */}
+              <button
+                onClick={() => setShowConfirm(true)}
+                className="px-4 py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-lg transition">
+                Delete
+              </button>
+            </div>
           )}
         </div>
+
+        {showConfirm && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="bg-white p-4 rounded shadow text-center space-y-4">
+              <p>Are you sure you want to delete this task?</p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="px-3 py-1 bg-gray-200 rounded">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-3 py-1 bg-red-500 text-white rounded">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <footer className="w-full py-8 bg-gray-100 text-center text-sm text-gray-600 border-t border-gray-200">
-        <p>&copy; {new Date().getFullYear()} Space Task Manager. All rights reserved.</p>
+        <p>
+          &copy; {new Date().getFullYear()} Space Task Manager. All rights
+          reserved.
+        </p>
       </footer>
     </div>
   );

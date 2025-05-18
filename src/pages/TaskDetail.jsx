@@ -69,16 +69,12 @@ export default function TaskDetail() {
     const fetchTask = async () => {
       try {
         const token = await fetchUserAuthToken();
-
         const response = await axios.get(
           `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`,
-          {
-            headers: { Authorization: token }
-          }
+          { headers: { Authorization: token } }
         );
-
         const raw = response.data.task;
-        const parsedTask = {
+        setTask({
           id: raw.task_id?.S,
           title: raw.title?.S,
           description: raw.description?.S,
@@ -86,39 +82,45 @@ export default function TaskDetail() {
           priority: raw.priority?.S,
           status: raw.status?.S,
           attachmentUrl: raw.attachmentUrl?.S,
-        };
-
-        setTask(parsedTask);
+        });
         setError(null);
       } catch (err) {
-        console.error("Error fetching task:", err);
-        setError("Failed to load task. Try again.");
+        console.error('Error fetching task:', err);
+        setError('Failed to load task. Try again.');
       } finally {
         setLoading(false);
       }
     };
-
-    if (id) {
-      fetchTask();
-    }
+    if (id) fetchTask();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-600 text-lg">Loading task details...</p>
-      </div>
-    );
-  }
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    try {
+      const token = await fetchUserAuthToken();
+      await axios.delete(
+        `https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors/task/${id}`,
+        { headers: { Authorization: token } }
+      );
+      navigate('/tasks');
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      alert(`Failed to delete task: ${err.message || 'Unknown error'}`);
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <p className="text-red-600 text-lg">{error}</p>
-        <Link to="/tasks" className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg">Back to Tasks</Link>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
+      <p className="text-gray-600 text-lg">Loading task details...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <p className="text-red-600 text-lg">{error}</p>
+      <Link to="/tasks" className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg">Back to Tasks</Link>
+    </div>
+  );
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
@@ -128,35 +130,36 @@ export default function TaskDetail() {
           <nav className="flex items-center space-x-4">
             <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">My Tasks</Link>
             {user && (
-              <button
-                onClick={signOut}
-                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium"
-              >
-                Sign Out
-              </button>
+              <>
+                <Link to={`/tasks/${id}/edit`} className="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg">Edit Task</Link>
+                <button
+                  onClick={handleDelete}
+                  className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                >
+                  Delete Task
+                </button>
+                <button
+                  onClick={signOut}
+                  className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium"
+                >
+                  Sign Out
+                </button>
+              </>
             )}
           </nav>
         </div>
       </header>
 
       <main className="flex-grow container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg border">
+        <div className="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg border space-y-4">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">{task.title}</h1>
-
-          <div className="space-y-4 text-gray-700">
-            <p><span className="font-semibold">Description:</span> {task.description || 'No description provided.'}</p>
-            <p><span className="font-semibold">Due Date:</span> {formatDate(task.dueDate)}</p>
-            <p><span className="font-semibold">Priority:</span> {task.priority || 'Not set'}</p>
-            <p><span className="font-semibold">Status:</span> {getStatusPill(task.status)}</p>
-            {task.attachmentUrl && (
-              <p><span className="font-semibold">Attachment:</span> <a href={task.attachmentUrl} className="text-purple-600 underline" target="_blank" rel="noopener noreferrer">View File</a></p>
-            )}
-          </div>
-
-          <div className="mt-8 flex justify-between">
-            <Link to={`/tasks/${task.id}/edit`} className="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg">Edit Task</Link>
-            <Link to="/tasks" className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg">Back</Link>
-          </div>
+          <p><span className="font-semibold">Description:</span> {task.description || 'No description provided.'}</p>
+          <p><span className="font-semibold">Due Date:</span> {formatDate(task.dueDate)}</p>
+          <p><span className="font-semibold">Priority:</span> {task.priority || 'Not set'}</p>
+          <p><span className="font-semibold">Status:</span> {getStatusPill(task.status)}</p>
+          {task.attachmentUrl && (
+            <p><span className="font-semibold">Attachment:</span> <a href={task.attachmentUrl} className="text-purple-600 underline" target="_blank" rel="noopener noreferrer">View File</a></p>
+          )}
         </div>
       </main>
 

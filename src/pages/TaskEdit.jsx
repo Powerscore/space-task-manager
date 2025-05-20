@@ -13,6 +13,7 @@ export default function TaskEdit({ isNew }) {
   const [loading, setLoading] = useState(!isNew);
   const [pageError, setPageError] = useState(null);
   const [file, setFile] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
@@ -112,7 +113,7 @@ export default function TaskEdit({ isNew }) {
       };
       const payload = Object.fromEntries(
         Object.entries(rawPayload).filter(
-          ([/* _ */, v]) =>
+          ([, /* _ */ v]) =>
             v !== undefined &&
             v !== null &&
             (typeof v !== "string" || v.trim() !== "")
@@ -168,15 +169,13 @@ export default function TaskEdit({ isNew }) {
         {!auth.isAuthenticated && !auth.isLoading && (
           <button
             onClick={() => auth.signinRedirect()}
-            className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-          >
+            className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
             Sign In
           </button>
         )}
         <Link
           to="/tasks"
-          className="mt-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-2"
-        >
+          className="mt-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-2">
           Back to Tasks
         </Link>
       </div>
@@ -191,8 +190,7 @@ export default function TaskEdit({ isNew }) {
         </p>
         <button
           onClick={() => auth.signinRedirect()}
-          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-        >
+          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
           Sign In
         </button>
       </div>
@@ -201,32 +199,97 @@ export default function TaskEdit({ isNew }) {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
-      <header className="py-4 px-6 bg-white shadow sticky top-0">
+      <header className="py-4 px-6 md:px-12 shadow-sm border-b border-gray-200 bg-white sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold text-purple-600">
             SpaceTaskManager
           </Link>
-          <nav className="flex items-center space-x-4">
-            <Link to="/tasks" className="text-gray-600 hover:text-purple-600">
+
+          {/* Hamburger Menu Button (visible on small screens) */}
+          <button
+            className="md:hidden text-gray-600 focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link
+              to="/tasks"
+              className="text-purple-600 hover:text-purple-800 font-semibold">
               My Tasks
             </Link>
             <Link
               to="/calendar"
-              className="text-gray-600 hover:text-purple-600"
-            >
+              className="text-gray-600 hover:text-purple-600 font-medium">
               Calendar
             </Link>
-            <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
-            {auth.isAuthenticated && (
-              <button
-                onClick={handleSignOut}
-                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm"
-              >
-                Sign Out
-              </button>
+            <Link
+              to="/profile"
+              className="text-gray-600 hover:text-purple-600 font-medium">
+              Profile
+            </Link>
+            {auth.user?.profile?.email && (
+              <span className="text-sm text-gray-700 hidden md:inline">
+                Hello, {auth.user.profile.email}
+              </span>
             )}
+            <button
+              onClick={handleSignOut}
+              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors">
+              Sign Out
+            </button>
           </nav>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden mt-4 space-y-2 px-2">
+            <Link
+              to="/tasks"
+              className="block text-purple-600 font-semibold"
+              onClick={() => setMenuOpen(false)}>
+              My Tasks
+            </Link>
+            <Link
+              to="/calendar"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              Calendar
+            </Link>
+            <Link
+              to="/profile"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              Profile
+            </Link>
+            {auth.user?.profile?.email && (
+              <span className="block text-sm text-gray-700">
+                Hello, {auth.user.profile.email}
+              </span>
+            )}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleSignOut();
+              }}
+              className="w-full text-left px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
+              Sign Out
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="flex-grow container mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -241,8 +304,7 @@ export default function TaskEdit({ isNew }) {
               isDragActive
                 ? "border-purple-400 bg-purple-50"
                 : "border-gray-300 bg-white"
-            }`}
-          >
+            }`}>
             <input {...getInputProps()} />
             {file ? (
               <p className="text-gray-800">

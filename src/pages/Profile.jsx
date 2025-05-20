@@ -12,8 +12,10 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false); // For mobile menu
 
-  const apiBase = "https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors";
+  const apiBase =
+    "https://mye64ogig2.execute-api.eu-north-1.amazonaws.com/stage-cors";
   const email = auth.user?.profile?.email;
   const userID = auth.user?.profile?.sub
     ? encodeURIComponent(auth.user.profile.email)
@@ -39,13 +41,10 @@ export default function Profile() {
     }
     const fetchImage = async () => {
       try {
-        const resp = await axios.get(
-          `${apiBase}/task/${userID}/attachments`,
-          {
-            headers: { Authorization: `Bearer ${auth.user.id_token}` },
-            params: { key: email },
-          }
-        );
+        const resp = await axios.get(`${apiBase}/task/${userID}/attachments`, {
+          headers: { Authorization: `Bearer ${auth.user.id_token}` },
+          params: { key: email },
+        });
         setImageUrl(resp.data.downloadUrl || resp.data.uploadUrl);
       } catch {
         // no image yet
@@ -115,37 +114,90 @@ export default function Profile() {
           <Link to="/" className="text-2xl font-bold text-purple-600">
             SpaceTaskManager
           </Link>
-          <nav className="flex items-center space-x-4">
-            <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">
+
+          {/* Hamburger Menu Button (visible on small screens) */}
+          <button
+            className="md:hidden text-gray-600 focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link
+              to="/tasks"
+              className="text-gray-600 hover:text-purple-600 font-medium">
               My Tasks
             </Link>
             <Link
               to="/calendar"
-              className="text-gray-600 hover:text-purple-600 font-medium"
-            >
+              className="text-gray-600 hover:text-purple-600 font-medium">
               Calendar
             </Link>
             <Link
               to="/profile"
-              className="text-purple-600 hover:text-purple-800 font-semibold"
-            >
+              className="text-purple-600 hover:text-purple-800 font-semibold">  
               Profile
             </Link>
-           
             <button
               onClick={handleSignOut}
-              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors"
-            >
+              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors">
               Sign Out
             </button>
           </nav>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden mt-4 space-y-2 px-2">
+            <Link
+              to="/tasks"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              My Tasks
+            </Link>
+            <Link
+              to="/calendar"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              Calendar
+            </Link>
+            <Link
+              to="/profile"
+              className="block text-purple-600 font-semibold"
+              onClick={() => setMenuOpen(false)}>
+              Profile
+            </Link>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleSignOut();
+              }}
+              className="w-full text-left px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
+              Sign Out
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
       <div className="bg-gradient-to-br from-purple-100 to-white min-h-screen flex items-center justify-center py-12 px-4">
         <div className="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full space-y-8">
-          <h1 className="text-3xl font-extrabold text-center text-gray-800">Your Profile</h1>
+          <h1 className="text-3xl font-extrabold text-center text-gray-800">
+            Your Profile
+          </h1>
 
           <div className="flex justify-center">
             <div className="relative">
@@ -168,15 +220,20 @@ export default function Profile() {
           <div
             {...getRootProps({ disabled: uploading })}
             className={`transition-colors duration-200 border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
-              ${isDragActive ? 'border-purple-500 bg-purple-50' : 'border-gray-300 bg-gray-50'}`}
-          >
+              ${
+                isDragActive
+                  ? "border-purple-500 bg-purple-50"
+                  : "border-gray-300 bg-gray-50"
+              }`}>
             <input {...getInputProps()} disabled={uploading} />
             {file ? (
               <p className="text-gray-700">
                 Selected: <span className="font-medium">{file.name}</span>
               </p>
             ) : (
-              <p className="text-gray-500">Drag & drop to change picture, or click to browse</p>
+              <p className="text-gray-500">
+                Drag & drop to change picture, or click to browse
+              </p>
             )}
           </div>
 
@@ -188,8 +245,7 @@ export default function Profile() {
             ) : (
               <button
                 onClick={handleUpload}
-                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-150"
-              >
+                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-150">
                 Upload New Picture
               </button>
             ))}

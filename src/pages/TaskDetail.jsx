@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from 'react-oidc-context';
+import { useAuth } from "react-oidc-context";
 
 // Helper function to determine status color
 const getStatusPill = (status) => {
@@ -93,6 +93,7 @@ export default function TaskDetail() {
   const [error, setError] = useState(null);
   const auth = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -179,7 +180,7 @@ export default function TaskDetail() {
   };
 
   const handleSignOut = () => {
-    const postLogoutRedirectUri = window.location.origin + '/';
+    const postLogoutRedirectUri = window.location.origin + "/";
     auth.signoutRedirect({ post_logout_redirect_uri: postLogoutRedirectUri });
   };
 
@@ -196,14 +197,12 @@ export default function TaskDetail() {
         <p className="text-red-600 text-lg mb-4">{error}</p>
         <button
           onClick={() => auth.signinRedirect()}
-          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-        >
+          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
           Sign In
         </button>
         <Link
           to="/tasks"
-          className="mt-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-2"
-        >
+          className="mt-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-2">
           Back to Tasks
         </Link>
       </div>
@@ -224,11 +223,12 @@ export default function TaskDetail() {
   if (!auth.isAuthenticated && !auth.isLoading) {
     return (
       <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <p className="text-gray-700 text-lg mb-4">Please sign in to view this task.</p>
+        <p className="text-gray-700 text-lg mb-4">
+          Please sign in to view this task.
+        </p>
         <button
           onClick={() => auth.signinRedirect()}
-          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-        >
+          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
           Sign In
         </button>
       </div>
@@ -238,11 +238,12 @@ export default function TaskDetail() {
   if (!task && !loading) {
     return (
       <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <p className="text-gray-700 text-lg">Task not found or could not be loaded.</p>
+        <p className="text-gray-700 text-lg">
+          Task not found or could not be loaded.
+        </p>
         <Link
           to="/tasks"
-          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-        >
+          className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
           Back to Tasks
         </Link>
       </div>
@@ -253,15 +254,36 @@ export default function TaskDetail() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col">
-      <header className="py-4 px-6 md:px-12 bg-white shadow-sm sticky top-0 border-b border-gray-200 z-50">
+      <header className="py-4 px-6 md:px-12 shadow-sm border-b border-gray-200 bg-white sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold text-purple-600">
             SpaceTaskManager
           </Link>
-          <nav className="flex items-center space-x-4">
+
+          {/* Hamburger Menu Button (visible on small screens) */}
+          <button
+            className="md:hidden text-gray-600 focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4">
             <Link
               to="/tasks"
-              className="text-gray-600 hover:text-purple-600 font-medium">
+              className="text-purple-600 hover:text-purple-800 font-semibold">
               My Tasks
             </Link>
             <Link
@@ -269,15 +291,60 @@ export default function TaskDetail() {
               className="text-gray-600 hover:text-purple-600 font-medium">
               Calendar
             </Link>
-            {auth.isAuthenticated && (
-              <button
-                onClick={handleSignOut}
-                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
-                Sign Out
-              </button>
+            <Link
+              to="/profile"
+              className="text-gray-600 hover:text-purple-600 font-medium">
+              Profile
+            </Link>
+            {auth.user?.profile?.email && (
+              <span className="text-sm text-gray-700 hidden md:inline">
+                Hello, {auth.user.profile.email}
+              </span>
             )}
+            <button
+              onClick={handleSignOut}
+              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors">
+              Sign Out
+            </button>
           </nav>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden mt-4 space-y-2 px-2">
+            <Link
+              to="/tasks"
+              className="block text-purple-600 font-semibold"
+              onClick={() => setMenuOpen(false)}>
+              My Tasks
+            </Link>
+            <Link
+              to="/calendar"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              Calendar
+            </Link>
+            <Link
+              to="/profile"
+              className="block text-gray-600 font-medium"
+              onClick={() => setMenuOpen(false)}>
+              Profile
+            </Link>
+            {auth.user?.profile?.email && (
+              <span className="block text-sm text-gray-700">
+                Hello, {auth.user.profile.email}
+              </span>
+            )}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleSignOut();
+              }}
+              className="w-full text-left px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
+              Sign Out
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="flex-grow container mx-auto py-10 px-4 sm:px-6 lg:px-8">
@@ -304,10 +371,9 @@ export default function TaskDetail() {
           {task.attachmentUrl && (
             <div className="py-2">
               <span className="font-semibold">Attachment:</span>{" "}
-              <button 
+              <button
                 onClick={handleGetAttachment}
-                className="ml-2 text-purple-600 hover:text-purple-800 underline"
-              >
+                className="ml-2 text-purple-600 hover:text-purple-800 underline">
                 {task.attachmentUrl} (Download)
               </button>
             </div>

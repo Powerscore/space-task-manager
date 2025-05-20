@@ -4,13 +4,24 @@
   "aws_cognito_region": "eu-north-1",
   "aws_user_pools_id": "eu-north-1_DZFnqmc50",
   "aws_user_pools_web_client_id": "2fa4s4knpgmclsngt7ojqeg5v0",
-  "oauth": {},
+  "oauth": {
+    "domain": "spacetaskmanager.auth.eu-north-1.amazoncognito.com",
+    "scope": [
+      "email",
+      "openid",
+      "profile"
+    ],
+    "redirectSignIn": "http://localhost:5173/",
+    "redirectSignOut": "http://localhost:5173/login/",
+    "responseType": "code"
+  },
   "aws_cognito_username_attributes": [
     "EMAIL"
   ],
   "aws_cognito_social_providers": [],
   "aws_cognito_signup_attributes": [
-    "EMAIL"
+    "EMAIL",
+    "name"
   ],
   "aws_cognito_mfa_configuration": "OFF",
   "aws_cognito_mfa_types": [

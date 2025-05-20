@@ -37,9 +37,8 @@ To begin using Space Task Manager, navigate to the website and either sign up fo
 
    * **Email Address**
    * **Password** (and confirm)
-3. Review and accept the Terms of Service.
-4. Click **Create Account**.
-5. You will be redirected to the Home Page upon successful registration.
+3. Click **Create Account**.
+4. You will be redirected to the Home Page upon successful registration.
 
 ### 1.2 Log In
 
@@ -54,10 +53,8 @@ To begin using Space Task Manager, navigate to the website and either sign up fo
 
 The Home Page provides an overview of your tasks and quick access to key actions.
 
-* **Navigation Bar**: Links to Home, My Tasks, Calendar, and Account settings.
-* **Quick Add**: A button to create a new task instantly.
-* **Recent Tasks**: A snapshot of tasks due soon or recently updated.
-
+* **Navigation Bar**: Links to Home, My Tasks, Calendar.
+* **My Tasks**: A button to view the list of tasks you have
 ---
 
 ## 3. Task List
@@ -87,14 +84,14 @@ Navigate to **My Tasks** to view all your tasks in one place.
 
 ## 4. Creating a New Task
 
-1. On any page, click **New Task** (or use Quick Add).
+1. On the grid view of tasks, click **New Task**.
 2. Fill in the task form:
 
    * **Title** (required)
-   * **Description** (optional)
+   * **Description** 
    * **Priority** (e.g., Low, Medium, High)
-   * **Status** (e.g., To Do, In Progress, Done)
-   * **Due Date** (optional)
+   * **Status** (e.g., To Do, In Progress, Done, Cancelled)
+   * **Due Date** 
    * **Attachment** (optional): Upload a file if needed.
 3. Click **Save** to create the task.
 
@@ -124,39 +121,8 @@ Click a task (from grid or calendar) to open its detail page.
 
 ### 5.4 File Attachments
 
-* When creating or editing a task, use the **Attachment** field to upload a file.
+* When creating or editing a task, use the **Attachment** drop-box to upload a file.
 * On the task detail page, click **Download** to retrieve the file.
 
----
-
-## 6. Account Management
-
-Access **Account** from the top navigation to:
-
-* Update your profile information (name, email).
-* Change password.
-* Log out of your account.
-
----
-
-## 7. FAQ
-
-**Q: How do I reset my password?**
-A: Go to the Log In page and click **Forgot Password**. Enter your email to receive reset instructions.
-
-**Q: Can I filter tasks by priority or status?**
-A: Yes! Use the filters panel in **My Tasks** to narrow down tasks.
-
-**Q: Is there a mobile app?**
-A: Currently, Space Task Manager is web-based only, optimized for mobile browsers.
-
----
-
-## 8. Support
-
-For further assistance, please contact our support team:
-
-* Email: [support@spacetaskmanager.com](mailto:support@spacetaskmanager.com)
-* Response Time: Within 24–48 hours
 
 Thank you for choosing **Space Task Manager** to organize your tasks!

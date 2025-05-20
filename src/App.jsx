@@ -9,6 +9,7 @@ import Tasks from './pages/Tasks';
 import TaskDetail from './pages/TaskDetail';
 import TaskEdit from './pages/TaskEdit';
 import TaskCalendar from './pages/TaskCalendar';
+import Profile from './pages/Profile';
 
 function PrivateRoute({ children }) {
   const { user, isLoading } = useAuth();
@@ -20,7 +21,7 @@ function PrivateRoute({ children }) {
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_DZFnqmc50",
   client_id: "2fa4s4knpgmclsngt7ojqeg5v0",
-  redirect_uri: "http://localhost:5175",
+  redirect_uri: "http://localhost:5173",
   response_type: "code",
   scope: "aws.cognito.signin.user.admin openid email",
   loadUserInfo: true,
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="/tasks/:id/edit" element={<PrivateRoute><TaskEdit isNew={false} /></PrivateRoute>} />
             <Route path="/tasks/new" element={<PrivateRoute><TaskEdit isNew={true} /></PrivateRoute>} />
             <Route path="/calendar" element={<PrivateRoute><TaskCalendar /></PrivateRoute>} />
+            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           </Routes>
           {/* Consider adding a global Footer component here */}
           {/* <Footer /> */}

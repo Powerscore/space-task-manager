@@ -11,8 +11,8 @@
       "openid",
       "profile"
     ],
-    "redirectSignIn": "http://localhost:5175/",
-    "redirectSignOut": "http://localhost:5175/login/",
+    "redirectSignIn": "http://localhost:5173/",
+    "redirectSignOut": "http://localhost:5173/login/",
     "responseType": "code"
   },
   "aws_cognito_username_attributes": [

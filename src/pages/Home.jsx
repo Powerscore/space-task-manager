@@ -17,6 +17,8 @@ export default function Home() {
             {user ? (
               <>
                 <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">My Tasks</Link>
+                <Link to="/calendar" className="text-gray-600 hover:text-purple-600 font-medium">Calendar</Link>
+                <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
                 <button 
                   onClick={signOut} 
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"

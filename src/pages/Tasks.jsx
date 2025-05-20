@@ -133,6 +133,7 @@ export default function Tasks() {
               className="text-gray-600 hover:text-purple-600 font-medium">
               Calendar
             </Link>
+            <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
             {auth.user?.profile?.email && <span className="text-sm text-gray-700 hidden md:inline">Hello, {auth.user.profile.email}</span>}
             <button
               onClick={handleSignOut}

@@ -135,6 +135,7 @@ export default function TaskCalendar() {
             <Link to="/calendar" className="text-purple-600 hover:text-purple-800 font-medium">
               Calendar
             </Link>
+            <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
             {auth.isAuthenticated && (
               <button
                 onClick={handleSignOut}

@@ -216,6 +216,7 @@ export default function TaskEdit({ isNew }) {
             >
               Calendar
             </Link>
+            <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
             {auth.isAuthenticated && (
               <button
                 onClick={handleSignOut}

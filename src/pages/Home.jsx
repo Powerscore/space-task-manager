@@ -3,7 +3,15 @@ import { Link } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';// Assuming AuthContext is in src/
 
 export default function Home() {
-  const { user, signOut } = useAuth();
+  const auth = useAuth();
+  const { user } = useAuth();
+
+  const handleSignOut = () => {
+  const postLogoutRedirectUri = `${window.location.origin}/`;
+  auth.signoutRedirect({
+    post_logout_redirect_uri: postLogoutRedirectUri,
+  });
+};
 
   return (
     <div className="w-full min-h-screen bg-white">
@@ -20,7 +28,7 @@ export default function Home() {
                 <Link to="/calendar" className="text-gray-600 hover:text-purple-600 font-medium">Calendar</Link>
                 <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
                 <button 
-                  onClick={signOut} 
+                  onClick={handleSignOut} 
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   Sign Out

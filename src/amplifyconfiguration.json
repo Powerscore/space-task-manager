@@ -4,7 +4,17 @@
   "aws_cognito_region": "eu-north-1",
   "aws_user_pools_id": "eu-north-1_DZFnqmc50",
   "aws_user_pools_web_client_id": "2fa4s4knpgmclsngt7ojqeg5v0",
-  "oauth": {},
+  "oauth": {
+    "domain": "spacetaskmanager.auth.eu-north-1.amazoncognito.com",
+    "scope": [
+      "email",
+      "openid",
+      "profile"
+    ],
+    "redirectSignIn": "https://13-53-207-206.nip.io",
+    "redirectSignOut": "https://13-53-207-206.nip.io/login/",
+    "responseType": "code"
+  },
   "aws_cognito_username_attributes": [
     "EMAIL"
   ],

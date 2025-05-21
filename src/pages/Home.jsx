@@ -4,42 +4,95 @@ import { useAuth } from 'react-oidc-context';// Assuming AuthContext is in src/
 
 export default function Home() {
   const { user, signOut } = useAuth();
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (
     <div className="w-full min-h-screen bg-white">
       {/* Header/Navigation Area - Simplified for now */}
-      <header className="py-4 px-6 md:px-12 shadow-sm border-b border-gray-200">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-purple-600">
-            SpaceTaskManager
-          </Link>
-          <nav className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <Link to="/tasks" className="text-gray-600 hover:text-purple-600 font-medium">My Tasks</Link>
-                <Link to="/calendar" className="text-gray-600 hover:text-purple-600 font-medium">Calendar</Link>
-                <Link to="/profile" className="text-gray-600 hover:text-purple-600 font-medium">Profile</Link>
-                <button 
-                  onClick={signOut} 
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
-                >
+       <header className="py-4 px-6 md:px-12 shadow-sm border-b border-gray-200 bg-white sticky top-0 z-50">
+            <div className="container mx-auto flex justify-between items-center">
+              <Link to="/" className="text-2xl font-bold text-purple-600">
+                SpaceTaskManager
+              </Link>
+    
+              {/* Hamburger Menu Button (visible on small screens) */}
+              <button
+                className="md:hidden text-gray-600 focus:outline-none"
+                onClick={() => setMenuOpen(!menuOpen)}>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+    
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex items-center space-x-4">
+                <Link
+                  to="/tasks"
+                  className="text-gray-600 hover:text-purple-600 font-medium">
+                  My Tasks
+                </Link>
+                <Link
+                  to="/calendar"
+                  className="text-purple-600 hover:text-purple-800 font-semibold">
+                  Calendar
+                </Link>
+                <Link
+                  to="/profile"
+                  className="text-gray-600 hover:text-purple-600 font-medium">
+                  Profile
+                </Link>
+    
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium transition-colors">
                   Sign Out
                 </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="text-gray-600 hover:text-purple-600 font-medium">Login</Link>
-                <Link 
-                  to="/signup" 
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
-                >
-                  Sign Up
+              </nav>
+            </div>
+    
+            {/* Mobile Menu */}
+            {menuOpen && (
+              <div className="md:hidden mt-4 space-y-2 px-2">
+                <Link
+                  to="/tasks"
+                  className="block text-gray-600 font-medium"
+                  onClick={() => setMenuOpen(false)}>
+                  My Tasks
                 </Link>
-              </>
+                <Link
+                  to="/calendar"
+                  className="block text-purple-600 font-semibold"
+                  onClick={() => setMenuOpen(false)}>
+                  Calendar
+                </Link>
+                <Link
+                  to="/profile"
+                  className="block text-gray-600 font-medium"
+                  onClick={() => setMenuOpen(false)}>
+                  Profile
+                </Link>
+    
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleSignOut();
+                  }}
+                  className="w-full text-left px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
+                  Sign Out
+                </button>
+              </div>
             )}
-          </nav>
-        </div>
-      </header>
+          </header>
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-gray-50">

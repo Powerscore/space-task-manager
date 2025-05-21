@@ -51,7 +51,7 @@ export default function Home() {
                 </Link>
                 <Link
                   to="/calendar"
-                  className="text-purple-600 hover:text-purple-800 font-semibold">
+                  className="text-gray-600 hover:text-purple-600 font-semibold">
                   Calendar
                 </Link>
                 <Link

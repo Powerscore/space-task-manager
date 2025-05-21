@@ -19,7 +19,7 @@ function PrivateRoute({ children }) {
 
 
 const cognitoAuthConfig = {
-  authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_DZFnqmc50",
+  authority: "https://spacetaskmanager.auth.eu-north-1.amazoncognito.com",
   client_id: "2fa4s4knpgmclsngt7ojqeg5v0",
   redirect_uri: "https://13-53-207-206.nip.io",
   response_type: "code",

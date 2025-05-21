@@ -179,10 +179,12 @@ export default function TaskDetail() {
     }
   };
 
-  const handleSignOut = () => {
-    const postLogoutRedirectUri = window.location.origin + "/";
-    auth.signoutRedirect({ post_logout_redirect_uri: postLogoutRedirectUri });
-  };
+const handleSignOut = () => {
+  const postLogoutRedirectUri = `${window.location.origin}/`;
+  auth.signoutRedirect({
+    post_logout_redirect_uri: postLogoutRedirectUri,
+  });
+};
 
   if (loading)
     return (

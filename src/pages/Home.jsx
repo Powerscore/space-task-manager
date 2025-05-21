@@ -3,7 +3,15 @@ import { Link } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';// Assuming AuthContext is in src/
 
 export default function Home() {
-  const { user, signOut } = useAuth();
+  const auth = useAuth();
+  const { user } = useAuth();
+
+  const handleSignOut = () => {
+  const postLogoutRedirectUri = `${window.location.origin}/`;
+  auth.signoutRedirect({
+    post_logout_redirect_uri: postLogoutRedirectUri,
+  });
+};
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (

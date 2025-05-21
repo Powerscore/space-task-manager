@@ -12,7 +12,7 @@
       "profile"
     ],
     "redirectSignIn": "https://13-53-207-206.nip.io",
-    "redirectSignOut": "https://13-53-207-206.nip.io/login/",
+    "redirectSignOut": "https://13-53-207-206.nip.io",
     "responseType": "code"
   },
   "aws_cognito_username_attributes": [

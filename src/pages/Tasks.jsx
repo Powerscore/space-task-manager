@@ -80,10 +80,12 @@ export default function Tasks() {
     }
   }, [auth.isAuthenticated, auth.isLoading, auth.user?.id_token]);
 
-  const handleSignOut = () => {
-    const postLogoutRedirectUri = window.location.origin + "/";
-    auth.signoutRedirect({ post_logout_redirect_uri: postLogoutRedirectUri });
-  };
+const handleSignOut = () => {
+  const postLogoutRedirectUri = `${window.location.origin}/`;
+  auth.signoutRedirect({
+    post_logout_redirect_uri: postLogoutRedirectUri,
+  });
+};
 
   if (auth.isLoading) {
     return (

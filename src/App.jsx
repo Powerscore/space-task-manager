@@ -21,7 +21,7 @@ function PrivateRoute({ children }) {
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_DZFnqmc50",
   client_id: "2fa4s4knpgmclsngt7ojqeg5v0",
-  redirect_uri: "http://localhost:5173",
+  redirect_uri: "https://13-53-207-206.nip.io",
   response_type: "code",
   scope: "aws.cognito.signin.user.admin openid email",
   loadUserInfo: true,

@@ -1,6 +1,6 @@
 - **AWS Steps:**
 
-  - **Spidey**
+  - **Alaa**
     - Created the S3 bucket so that attachments can be uploaded/downloaded.
     - Created the Lambda that generates a presigned URL given the task ID and the file name to allow the frontend to access the S3 task attachment directly, as well as the Lambda that generates a presigned URL to allow the frontend to directly upload the task attachment to the `bucket/taskId/filename`.
     - Created the API Gateway and linked the Lambdas to them.
@@ -12,7 +12,7 @@
     - In the grid view, added analytical summaries of tasks in terms of status, percentages of what's done and what's in progress.
     - Made the website mobile responsive. The navbar turns into hamburger style on mobile screens.
 
-  - **Awesome Bob**
+  - **Ali**
     - Added to the API Gateway the route of `POST /task`.
     - Created the Lambda function called `create-task`, added a trigger to the API Gateway.
     - Added the code to allow putting items from the request into DynamoDB.

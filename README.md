@@ -1,5 +1,5 @@
 
-![Architecture Diagram](https://github.com/user-attachments/assets/f64b855f-1c65-4f45-917b-09c0bac6a593)
+![image](https://github.com/user-attachments/assets/ab6cc4ca-3d0c-4aa7-b508-9722411525e8)
 
 
 - **AWS Steps:**
